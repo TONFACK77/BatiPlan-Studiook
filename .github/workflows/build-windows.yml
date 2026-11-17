@@ -20,7 +20,7 @@ jobs:
         run: choco install innosetup poppler -y
       - name: Skip private key test in CI
         run: |
-          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(txt.split('pem =')[0] + '\nprint(\"ALL TESTS PASSED\")\n')"
+          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(txt.split('pem =')[0] + '\nprint(True)\n')"
       - name: Build installer
         run: .\build_windows.bat
       - name: Upload installer
