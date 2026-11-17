@@ -18,6 +18,10 @@ jobs:
           pip install -r requirements.txt pyinstaller
       - name: Install Inno Setup and Poppler
         run: choco install innosetup poppler -y
+      - name: Create dummy key for tests
+        run: |
+          New-Item -ItemType Directory -Force -Path "seller_kit"
+          python -c "from cryptography.hazmat.primitives.asymmetric import ed25519; from cryptography.hazmat.primitives import serialization; k = ed25519.Ed25519PrivateKey.generate(); open('seller_kit/private_key.pem', 'wb').write(k.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()))"
       - name: Build installer
         run: .\build_windows.bat
       - name: Upload installer
