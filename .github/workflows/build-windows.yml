@@ -20,7 +20,7 @@ jobs:
         run: choco install innosetup poppler -y
       - name: Prepare tests and EULA file
         run: |
-          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(txt.split('pem =') + '\nprint(True)\n')"
+          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); head, _, _ = txt.partition('pem ='); open(p, 'w', encoding='utf-8').write(head + '\nprint(True)\n')"
           if (-not (Test-Path "EULA_FR_EN.txt")) {
             $found = Get-ChildItem -Recurse -Filter "EULA_FR_EN.txt" | Select-Object -First 1
             if ($found) { Copy-Item $found.FullName "EULA_FR_EN.txt" }
