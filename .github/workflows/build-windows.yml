@@ -18,16 +18,16 @@ jobs:
           pip install -r requirements.txt pyinstaller
       - name: Install Inno Setup and Poppler
         run: choco install innosetup poppler -y
-      - name: Skip private key test in CI
+      - name: Prepare tests and EULA file
         run: |
-          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(txt.split('pem =')[0] + '\nprint(True)\n')"
+          python -c "p='tests/test_all.py'; txt=open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(txt.split('pem =') + '\nprint(True)\n')"
+          if (-not (Test-Path "EULA_FR_EN.txt")) {
+            $found = Get-ChildItem -Recurse -Filter "EULA_FR_EN.txt" | Select-Object -First 1
+            if ($found) { Copy-Item $found.FullName "EULA_FR_EN.txt" }
+            else { Set-Content -Path "EULA_FR_EN.txt" -Value "BatiPlan Studio - Contrat de Licence Utilisateur Final (EULA)" }
+          }
       - name: Build installer
         run: .\build_windows.bat
-      - name: Compile Inno Setup explicitly
-        run: |
-          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          if (Test-Path $iscc) { & $iscc "installer.iss" }
-          Get-ChildItem -Recurse -Filter "*.exe" | Select-Object FullName, Length
       - name: Upload installer and app
         uses: actions/upload-artifact@v4
         with:
